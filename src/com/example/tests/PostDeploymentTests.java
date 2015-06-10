@@ -44,7 +44,7 @@ public class PostDeploymentTests {
 
 	
 	public void login() throws Exception {
-		selenium.open("http://cirm.miamidade.gov/html/login.htm");
+		selenium.open("http://cirm.miamidade.gov");
 	//	selenium.open("https://311hub.miamidade.gov/html/login.html");
 		selenium.type("id=iUsername", loginUserID );
 		selenium.type("id=iPassword", longPwd);
@@ -55,23 +55,23 @@ public class PostDeploymentTests {
 		}
 	}
 	
-//	@Test
+	@Test
 	public void ValidateAddress() throws Exception {
 		login();
 		selenium.click("//input[@value='']");
-		selenium.type("//input[@value='']", "9920 sw 73rd st");
+		selenium.type("//input[@value='']", "9910 sw 73rd st");
 		selenium.click("//input[@value='Search']");
 		assertTrue(selenium.isElementPresent("css=#answer_hub > div:nth-child(1) > span > input.ic_valid.button_icon.visibility_visible"));
 		}
 
-//	@Test
+	@Test
 	public void GeoInfoTab() throws Exception {
 		ValidateAddress();
 		selenium.click("id=geo_info_district");
 		assertTrue(selenium.isTextPresent("District"));
 	}
 	
-//	@Test
+	@Test
 	public void OpenSRInAnswerHub() throws Exception {
 		ValidateAddress();
 		selenium.type("xpath=(//input[@type='text'])[6]", "Bulky");
@@ -82,7 +82,7 @@ public class PostDeploymentTests {
 		assertTrue(selenium.isVisible("css=#sr_details > div:nth-child(22) > h4"));
 	 }
 	
-//	@Test
+	@Test
 	public void ValidateinWCS() throws Exception {
 		OpenSRInAnswerHub();
 		selenium.click("css=textarea.tooltip");
@@ -98,12 +98,12 @@ public class PostDeploymentTests {
 		selenium.click("css=#wcs_right > input.button.blue");
 		Thread.sleep(8000);
 		selenium.click("id=sendToSRButtonID");
-		assertTrue(selenium.isVisible("11558254"));
+		assertTrue(selenium.isVisible("css=#sr_details > div.grid_7.alpha.omega.scroller > div > div:nth-child(2) > input"));
 	
 
 		}
 	
-//	@Test
+	@Test
 	public void MasterClr() throws Exception {
 		OpenSRInAnswerHub();
 		selenium.click("css=textarea.tooltip");
@@ -145,13 +145,13 @@ public class PostDeploymentTests {
 		selenium.click("xpath=(//button[@type='button'])[3]");
 		selenium.click("//div[@id='sr_details']/div[23]/div/div[50]/input");
 		selenium.type("//div[@id='sr_details']/div[23]/div/div[50]/input", "3305111234");
-		selenium.click("css=#sr_details > div.grid_2.omega > input.button.blue");
-		selenium.click("xpath=(//button[@type='button'])[5]");
-		assertFalse(selenium.isVisible("css=div.grid_5.alpha > input..error"));
-		assertTrue(selenium.isVisible("css=div.grid_5.alpha > input..error"));
+		selenium.click("css=#sr_details > div:nth-child(2) > input");
+		selenium.click("css=body > div:nth-child(15) > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1) > span");
+		assertTrue(selenium.isTextPresent("11558262"));
 
+		
 	}
-// 	@Test	
+ 	@Test	
  	public void SaveSr() throws Exception {
 		OpenSRInAnswerHub();
 		selenium.click("css=textarea.tooltip");
@@ -200,7 +200,7 @@ public class PostDeploymentTests {
  	}
  	
  	
-//	@Test	
+	@Test	
  	public void OpenSrBasicSearch() throws Exception {
  		login();
  		selenium.click("link=Basic Search");
@@ -219,7 +219,7 @@ public class PostDeploymentTests {
  		
  	}
  	
-// 	@Test
+ 	@Test
 	public void FeildSort() throws Exception {
 		selenium.open("http://cirm.miamidade.gov/html/login.html");
 		selenium.type("id=iUsername", "c203036");
@@ -252,7 +252,7 @@ public class PostDeploymentTests {
  	
  	
  	
-//    @Test
+    @Test
  	public void ViewReport() throws Exception {
  		login();
  		selenium.click("link=Basic Search");
@@ -270,7 +270,7 @@ public class PostDeploymentTests {
 		
  	}
  	
-//	@Test
+	@Test
  	public void Duplicate() throws Exception {
  		login();
  		selenium.click("link=Service Hub");
@@ -284,7 +284,7 @@ public class PostDeploymentTests {
 		
  	}
  	
-// 	@Test
+ 	@Test
  	public void OutofServiceArea() throws Exception {
  		login();
  		selenium.click("link=Service Hub");
@@ -344,6 +344,6 @@ public class PostDeploymentTests {
 
 	@After
 	public void tearDown() throws Exception {
-//	 selenium.stop();
+	 selenium.stop();
 	}
 }
