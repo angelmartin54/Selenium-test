@@ -38,14 +38,14 @@ public class PostDeploymentTests {
 //		selenium = new DefaultSelenium("localhost", 4444, "*firefox C:/Users/angel.martin/AppData/Local/Mozilla Firefox/firefox.exe" , "http://cirm.miamidade.gov");
 		selenium = new DefaultSelenium("localhost", 4444, "*googlechrome C:/Program Files (x86)/Google/Chrome/Application/chrome.exe" , "http://cirm.miamidade.gov");
 //		selenium = new DefaultSelenium("localhost", 4444, "*iexplore C:/Program Files (x86)/Internet Explorer/iexplore.exe" , "http://cirm.miamidade.gov");
-	//	selenium = new DefaultSelenium("localhost", 4444, "*googlechrome C:/Program Files (x86)/Google/Chrome/Application/chrome.exe" , "https://311hub.miamidade.gov");
+//		selenium = new DefaultSelenium("localhost", 4444, "*googlechrome C:/Program Files (x86)/Google/Chrome/Application/chrome.exe" , "https://311hub.miamidade.gov");
 		selenium.start();
 	}
 
 	
 	public void login() throws Exception {
 		selenium.open("http://cirm.miamidade.gov");
-	//	selenium.open("https://311hub.miamidade.gov/html/login.html");
+//		selenium.open("https://311hub.miamidade.gov/html/login.html");
 		selenium.type("id=iUsername", loginUserID );
 		selenium.type("id=iPassword", longPwd);
 		selenium.click("id=btnLogin");
