@@ -3,59 +3,119 @@ package com.example.tests;
 
 
 import static org.junit.Assert.*;
-
+import java.net.HttpURLConnection;
+import java.net.URL;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-//import org.openqa.selenium.chrome.ChromeDriver;
-//import org.openqa.selenium.remote.DesiredCapabilities;
-
-
-
-
-
-
-
-
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
+import org.openqa.selenium.server.RemoteControlConfiguration;
+import org.testng.Assert;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 
-
+import junit.framework.AssertionFailedError;
+@SuppressWarnings("deprecation")
 public class PostDeploymentTests {
 	//Variables for Post deploymnet tests
 	//can be used across methods.
 	private Selenium selenium;
-	private String loginUserID = "e160616";
-	private String longPwd = "password";
-	private String pageLoadTime = "50000"; 
+	private String site = "http://s0020284/html/login.html";
+//	private String Homebttn = "css=1#answer_hub > div:nth-child(8) > div > a";
+//	private String Recipients = "rajiv@miamidade.gov,nijat@miamidade.gov,chirino@miamidade.gov";
+	private String loginUserID = "c203036";
+	private String longPwd = "something"; 
+	private String recipients = "rajiv@miamidade.gov";
 	private void ln (Object test){
 		System.out.println(test);
 	}
+		
+	//private String longPwd = "password";
+	//private String pageLoadTime= "50000";
+	public class SimpleOnFailed extends TestWatcher {
+	    @Override
+	    protected void failed(Throwable e, Description description) {
+	    	ln("failed");
+	     }
+	}
+		
+	//private String longPwd = "password";
+	//private String pageLoadTime= "50000";
+	
+	
+	public static boolean isMyServerUp(){
+		try {
+			URL uri = new URL ("http://localhost:4444/wd/hub/status");
+		
+			HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
+//			connection.setRequestMethod("GET");
+			connection.setRequestProperty("Accept-Charset", "UTF-8");
+			connection.getInputStream();
+			int HttpResult = connection.getResponseCode();
+		    if(HttpResult == HttpURLConnection.HTTP_OK) return true;
+		    else return false;
+		  
+		}catch (Exception e){
+			return false;
+		} 		
+	}
+	
+	private Thread myThread = new Thread() {
+	    public void run() {
+	        try {
+	        	Process P = Runtime.getRuntime().exec("cmd /c start javaw -jar C:\\users\\angel.martin.MIAMIDADE\\Downloads\\selenium-java-2.52.0\\selenium-2.52.0\\selenium-server-standalone-2.52.0.jar -trustAllSSLCertificates");
+	        	P.waitFor();
+	        														System.out.println("Sucessfully started selenium server");
+	        	
+	        } catch(Exception e) {
+	            System.out.println(e);
+	        }
+	    }  
+	};
+	 
 	
 	@Before
-	public void setUp() throws Exception {
-//		selenium = new DefaultSelenium("localhost", 4444, "*firefox C:/Users/angel.martin/AppData/Local/Mozilla Firefox/firefox.exe" , "http://cirm.miamidade.gov");
-		selenium = new DefaultSelenium("localhost", 4444, "*googlechrome C:/Program Files (x86)/Google/Chrome/Application/chrome.exe" , "http://cirm.miamidade.gov");
-//		selenium = new DefaultSelenium("localhost", 4444, "*iexplore C:/Program Files (x86)/Internet Explorer/iexplore.exe" , "http://cirm.miamidade.gov");
-	//	selenium = new DefaultSelenium("localhost", 4444, "*googlechrome C:/Program Files (x86)/Google/Chrome/Application/chrome.exe" , "https://311hub.miamidade.gov");
-		selenium.start();
-	}
+	public void startServer () throws Exception {
+//		SendEmail.send("rajiv@miamidade.gov","test is starting", "test is starting");
+		
+		myThread.start();
 
-	
+		int c = 0;
+		do {
+			Thread.sleep(1000);
+			c++;
+			} while (!isMyServerUp() && c < 10);
+		
+		if (c>10) throw new RuntimeException("Failure to contact selenium sever after ten attempts");
+	 
+		RemoteControlConfiguration settings = new RemoteControlConfiguration();
+		settings.setTrustAllSSLCertificates(true);
+		
+		selenium = new DefaultSelenium("localhost", 4444, "*googlechrome C:/Program Files (x86)/Google/Chrome/Application/chrome.exe" , site);              
+         
+		
+        selenium.start();
+	}
+	@Test
 	public void login() throws Exception {
-		selenium.open("http://cirm.miamidade.gov/html/login.htm");
-	//	selenium.open("https://311hub.miamidade.gov/html/login.html");
+		try{
+		selenium.open(site);
 		selenium.type("id=iUsername", loginUserID );
 		selenium.type("id=iPassword", longPwd);
 		selenium.click("id=btnLogin");
-		for (int i = 0; i < 3; i++)
-		{
+		for (int i = 0; i < 3; i++);
+				{
 			selenium.waitForPageToLoad("5000");
-		}
-	}
-	
-//	@Test
+		}}catch (Exception e){
+            System.out.println(e);
+            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
+            Assert.fail();
+        }}
+		
+			
+	@Test
 	public void ValidateAddress() throws Exception {
 		login();
 		selenium.click("//input[@value='']");
@@ -64,14 +124,14 @@ public class PostDeploymentTests {
 		assertTrue(selenium.isElementPresent("css=#answer_hub > div:nth-child(1) > span > input.ic_valid.button_icon.visibility_visible"));
 		}
 
-//	@Test
+	@Test
 	public void GeoInfoTab() throws Exception {
 		ValidateAddress();
 		selenium.click("id=geo_info_district");
 		assertTrue(selenium.isTextPresent("District"));
 	}
 	
-//	@Test
+	@Test
 	public void OpenSRInAnswerHub() throws Exception {
 		ValidateAddress();
 		selenium.type("xpath=(//input[@type='text'])[6]", "Bulky");
@@ -82,7 +142,7 @@ public class PostDeploymentTests {
 		assertTrue(selenium.isVisible("css=#sr_details > div:nth-child(22) > h4"));
 	 }
 	
-//	@Test
+	@Test
 	public void ValidateinWCS() throws Exception {
 		OpenSRInAnswerHub();
 		selenium.click("css=textarea.tooltip");
@@ -103,7 +163,7 @@ public class PostDeploymentTests {
 
 		}
 	
-//	@Test
+	@Test
 	public void MasterClr() throws Exception {
 		OpenSRInAnswerHub();
 		selenium.click("css=textarea.tooltip");
@@ -200,7 +260,7 @@ public class PostDeploymentTests {
  	}
  	
  	
-//	@Test	
+	@Test	
  	public void OpenSrBasicSearch() throws Exception {
  		login();
  		selenium.click("link=Basic Search");
@@ -219,9 +279,9 @@ public class PostDeploymentTests {
  		
  	}
  	
-// 	@Test
+ 	@Test
 	public void FeildSort() throws Exception {
-		selenium.open("http://cirm.miamidade.gov/html/login.html");
+		selenium.open(site);
 		selenium.type("id=iUsername", "c203036");
 		selenium.type("id=iPassword", "Pass");
 		selenium.click("id=btnLogin");
@@ -252,7 +312,7 @@ public class PostDeploymentTests {
  	
  	
  	
-//    @Test
+    @Test
  	public void ViewReport() throws Exception {
  		login();
  		selenium.click("link=Basic Search");
@@ -264,13 +324,9 @@ public class PostDeploymentTests {
 		Thread.sleep(500);
 		selenium.click("css=#advSearchResults > table > tbody > tr:nth-child(1) > td:nth-child(1) > a");
 		selenium.click("css=body > div:nth-child(11) > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2) > span");
-//		Thread.sleep(5000);
-//		assertTrue(selenium.isElementPresent("id=plugin"));
-		
-		
  	}
  	
-//	@Test
+	@Test
  	public void Duplicate() throws Exception {
  		login();
  		selenium.click("link=Service Hub");
@@ -284,7 +340,7 @@ public class PostDeploymentTests {
 		
  	}
  	
-// 	@Test
+ 	@Test
  	public void OutofServiceArea() throws Exception {
  		login();
  		selenium.click("link=Service Hub");
@@ -301,7 +357,7 @@ public class PostDeploymentTests {
  	
  	@Test
  	public void apporvalProcess() throws Exception {
- 		selenium.open("http://cirm.miamidade.gov/html/login.htm");
+ 		selenium.open(site);
  		selenium.type("id=iUsername", loginUserID );
 		selenium.type("id=iPassword", longPwd);
 		selenium.click("id=btnLogin");
@@ -320,13 +376,10 @@ public class PostDeploymentTests {
 		Thread.sleep(5000);
 		selenium.click("css=#advSearchResults > table > tbody > tr:nth-child(3) > td:nth-child(1) > a");
 		selenium.click("css=body > div:nth-child(11) > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1) > span");
-		selenium.click("css=#sr_details_left > ul > li:nth-child(1) > a");
 		Thread.sleep(2000);
 		assertTrue(selenium.isVisible("css=#ui-dialog-title-sh_dialog_alert"));
 		selenium.isTextPresent("The following Service Request has been identified as a self-service request and is 'Pending Approval'. Please review the request and make appropriate changes. When complete, set the status to 'Open' then save.");
-		selenium.click("css=body > div:nth-child(12) > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button > span");
-		
-		
+				
  	}
 		
 //	private boolean isTextPresent(String textToBeVerified) {
@@ -341,9 +394,14 @@ public class PostDeploymentTests {
 //		    }
 //	}
 
-
+ 	@Test
+	public void message() throws Exception {
+		SendEmail.send("angel.martin@miamidade.gov,rajiv@miamidade.gov","Hello my Friend", "it works jejejejejeje");
+	}
 	@After
 	public void tearDown() throws Exception {
-//	 selenium.stop();
+	 selenium.stop();
+	 selenium.shutDownSeleniumServer();
+	 ln("server successfully shut down.");
 	}
 }

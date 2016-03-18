@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/com/example/tests/SendEmail.java</name>
+			<type>1</type>
+			<location>C:/Users/angel.martin.MIAMIDADE/Documents/tEST/SendEmail.java</location>
+		</link>
+	</linkedResources>
 </projectDescription>
