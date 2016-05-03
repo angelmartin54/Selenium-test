@@ -99,7 +99,6 @@ public class PostDeploymentTests {
 		
         selenium.start();
 	}
-	
 	@Test
 	public void login() throws Exception {
 		try{
@@ -130,8 +129,6 @@ public class PostDeploymentTests {
             SendEmail.send("angel.martin@miamidade.gov", "test", "Validate address"+e.getMessage());
             Assert.fail();
         }}
-	
-	
 	@Test
 	public void addloop() throws Exception {
 		selenium.open(site);
@@ -185,7 +182,6 @@ public class PostDeploymentTests {
 			ln(selenium.isElementPresent("css=#answer_hub > div:nth-child(1) > span > input.ic_valid.button_icon.visibility_visible"));
 			Assert.fail();
 		}}}}			
-			
 	@Test
 	public void GeoInfoTab() throws Exception {
 		try{
@@ -215,8 +211,6 @@ public class PostDeploymentTests {
             SendEmail.send("angel.martin@miamidade.gov", "test", "Open Sr in Answer Hub"+e.getMessage());
             Assert.fail();
         }}	
-	
-	
 	@Test
 	public void ValidateinWCS() throws Exception {
 		try{
@@ -288,7 +282,6 @@ public class PostDeploymentTests {
             SendEmail.send("angel.martin@miamidade.gov", "test", "Mater CLR"+e.getMessage());
             Assert.fail();
         }}
-
 // 	@Test	
  	public void SaveSr() throws Exception {
 //		try{
@@ -404,8 +397,6 @@ public class PostDeploymentTests {
           SendEmail.send("angel.martin@miamidade.gov", "test", "Feild Sort"+e.getMessage());
           Assert.fail();
         }}
-
-		
     @Test
  	public void ViewReport() throws Exception {
  		try{
@@ -457,14 +448,28 @@ public class PostDeploymentTests {
  	public void Duplicate() throws Exception {
  		try{
  		login();
- 		selenium.click("link=Service Hub");
-		selenium.click("id=srTypeID");
-		selenium.type("id=srTypeID", "BOAT STORAGE - MD");
-		selenium.click("xpath=(//input[@value=''])[7]");
-		selenium.type("css=#sr_details > div.grid_5.alpha > span.input_clear > input.ic_field.h24", "4405 SW 129 AVE");
-		selenium.click("xpath=(//input[@value='Search'])[6]");
-		Thread.sleep(8000);
-		assertTrue(selenium.isElementPresent("css=#sr_details_right > input.red_button.button.blue"));
+ 		selenium.click("css=body > div.container_12 > div.banner.grid_12 > ul > li:nth-child(6) > a");
+ 		selenium.type("css=#srTypeListAdvSearch > input", "BULKY TRASH REQUEST - MD");
+ 		selenium.type("id=createdStartDate", "-2");
+ 		selenium.click("css=#advSearch_right > input:nth-child(1)");
+ 		Thread.sleep(4500);
+ 		String Address = selenium.getText("css=#advSearchResults > table > tbody > tr:nth-child(1) > td:nth-child(3)");
+ 		selenium.click("css=#advSearchResults > table > tbody > tr:nth-child(1) > td:nth-child(1) > a");
+ 		selenium.click("css=body > div:nth-child(11) > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1) > span");
+ 		Thread.sleep(1000);
+ 		selenium.click("css=#sr_details_left > ul > div > li:nth-child(1) > a");
+ 		Thread.sleep(500);
+ 		ln(Address);
+ 		selenium.click("css=#sr_details > div:nth-child(2) > input");
+ 		Thread.sleep(500);
+ 		selenium.click("css=body > div:nth-child(12) > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1) > span");
+ 		selenium.type("id=srTypeID", "BULKY TRASH REQUEST - MD");
+ 		selenium.click("css=#srTypeList > span > input.submit.h23_submit.button.blue");
+ 		selenium.click("css=body > div:nth-child(13) > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1) > span");
+ 		selenium.type("css=#sr_details > div:nth-child(7) > span > input.ic_field.h24.error", Address);
+ 		selenium.click("css=#sr_details > div:nth-child(7) > span > input.submit.h32.button.blue");
+ 		Thread.sleep(6000);
+		assertTrue(selenium.isVisible("css=#sr_details_right > input.red_button.button.blue"));
  		}catch (Exception e){
             System.out.println(e);
             selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/Duplicate.png");
@@ -503,38 +508,26 @@ public class PostDeploymentTests {
  		selenium.click("css=#advsearch_moreDetails > div.grid_2 > select.f_left");
 		selenium.select("css=#advsearch_moreDetails > div.grid_2 > select.f_left", "label=Pending");
 		selenium.click("css=#advSearch_right > input:nth-child(1)");
-		Thread.sleep(5000);
+		Thread.sleep(5500);
 		selenium.click("css=#advSearchResults > table > tbody > tr:nth-child(3) > td:nth-child(1) > a");
 		selenium.click("css=body > div:nth-child(11) > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1) > span");
 		Thread.sleep(5000);
 		selenium.isTextPresent("The following Service Request has been identified as a self-service request and is 'Pending Approval'. Please review the request and make appropriate changes. When complete, set the status to 'Open' then save.");
  		}catch (Exception e){
             System.out.println(e);
-            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failed test/ApprovalProcess.png");
+            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/ApprovalProcess.png");
             SendEmail.send("angel.martin@miamidade.gov", "test", "Apporval Process <br>file:///C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/ApprovalProcess.png"+e.getMessage());
             Assert.fail();
         }}
-//	private boolean isTextPresent(String textToBeVerified) {
-//		// TODO Auto-generated method stub
-//		   try{
-//			   
-//		        boolean b = selenium.isTextPresent(textToBeVerified);
-//		        return b;
-//		    }
-//		    catch(Exception e){
-//		        return false;
-//		    }
-//	}
-
 // 	@Test
 	public void message() throws Exception {
 		SendEmail.send("angel.martin@miamidade.gov","Hello my Friend", "it works jejejejejeje");
 	}
 	@After
 	public void tearDown() throws Exception {
-	 selenium.stop();
-	 selenium.shutDownSeleniumServer();
-	 ln("server successfully shut down.");
+//	 selenium.stop();
+//	 selenium.shutDownSeleniumServer();
+//	 ln("server successfully shut down.");
 	
 	}
 }
