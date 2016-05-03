@@ -4,6 +4,8 @@ package com.example.tests;
 import static org.junit.Assert.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
+
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
@@ -21,8 +23,10 @@ public class PostDeploymentTests {
 	//Variables for Post deploymnet tests
 	//can be used across methods.
 	private Selenium selenium;
-	private String site = "https://311hub.miamidade.gov/";
+//	private String site = "https://s0020284/html/startup.html#";
+	private String site = "https://311hub.miamidade.gov/#";
 	private String loginUserID = "c203036";
+	private String pass = "hahahaha147";
 	private String longPwd = "something"; 
 	private String recipients = "rajiv@miamidade.gov";
 	private void ln (Object test){
@@ -96,34 +100,93 @@ public class PostDeploymentTests {
         selenium.start();
 	}
 	
-//	@Test
+	@Test
 	public void login() throws Exception {
 		try{
-		selenium.open(site);
-		selenium.type("id=iUsername", "c203036");
-		selenium.type("id=iPassword", "hahahaha147");
-		selenium.click("id=btnLogin");
-		Thread.sleep(8000);
-		selenium.isTextPresent("Popular Searches");
+			selenium.open(site);
+			selenium.type("id=iUsername", loginUserID);
+			selenium.type("id=iPassword", pass);
+			selenium.click("id=btnLogin");
+			Thread.sleep(8000);
+			selenium.isTextPresent("Popular Searches");
 		}catch (Exception e){
             System.out.println(e);
-            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
+            SendEmail.send("angel.martin@miamidade.gov", "test", "**login test has failed**<br><br>Screen shot on failure can be found at File:///C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/Login.png<br><br><br>To manually test this follow the steps below<br>* Open Chorme and navigate to the CiRM application<br>* Fill in the User and Password boxes<br>* Then click the Login button and wait 8-10 seconds for the application to load if the page loads the test has passed<br><br>"+e.getMessage());
+            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/Login.png");
             Assert.fail();
         }}
-//	@Test
+	@Test
 	public void ValidateAddress() throws Exception {
 		try{
 		login();
 		selenium.click("//input[@value='']");
 		selenium.type("//input[@value='']", "9920 sw 73rd st");
 		selenium.click("//input[@value='Search']");
-		selenium.isElementPresent("css=#answer_hub > div:nth-child(1) > span > input.ic_valid.button_icon.visibility_visible");
+		Thread.sleep(4000);
+		selenium.isVisible("css=#answer_hub > div:nth-child(1) > span > input.ic_valid.button_icon.visibility_visible");
 		}catch (Exception e){
             System.out.println(e);
-            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
+            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/Validateaddress.png");
+            SendEmail.send("angel.martin@miamidade.gov", "test", "Validate address"+e.getMessage());
             Assert.fail();
         }}
-//	@Test
+	
+	
+	@Test
+	public void addloop() throws Exception {
+		selenium.open(site);
+		System.out.print("[");
+		selenium.type("id=iUsername", loginUserID);
+		selenium.type("id=iPassword", pass);
+		selenium.click("id=btnLogin");
+		Thread.sleep(8000);
+		selenium.click("//input[@value='']");
+		selenium.type("//input[@value='']", "9920 sw 73rd st");
+		selenium.click("//input[@value='Search']");
+		Thread.sleep(2000);
+		if((selenium.isVisible("css=#answer_hub > div:nth-child(1) > span > input.ic_valid.button_icon.visibility_visible"))==true){
+			System.out.print("=");
+			selenium.refresh();
+			selenium.type("id=iUsername", loginUserID);
+			selenium.type("id=iPassword", pass);
+			selenium.click("id=btnLogin");
+			Thread.sleep(8000);
+			selenium.click("//input[@value='']");
+			selenium.type("//input[@value='']", "9920 sw 73rd st");
+			selenium.click("//input[@value='Search']");
+			Thread.sleep(2000);
+		if((selenium.isVisible("css=#answer_hub > div:nth-child(1) > span > input.ic_valid.button_icon.visibility_visible"))==true){
+			System.out.print("=");
+			selenium.refresh();
+			selenium.type("id=iUsername", loginUserID);
+			selenium.type("id=iPassword", pass);
+			selenium.click("id=btnLogin");
+			Thread.sleep(8000);
+			selenium.click("//input[@value='']");
+			selenium.type("//input[@value='']", "9920 sw 73rd st");
+			selenium.click("//input[@value='Search']");
+			Thread.sleep(2000);
+		if((selenium.isVisible("css=#answer_hub > div:nth-child(1) > span > input.ic_valid.button_icon.visibility_visible"))==true){
+			System.out.print("=");
+			selenium.refresh();
+			selenium.type("id=iUsername", loginUserID);
+			selenium.type("id=iPassword", pass);
+			selenium.click("id=btnLogin");
+			Thread.sleep(8000);
+			selenium.click("//input[@value='']");
+			selenium.type("//input[@value='']", "9920 sw 73rd st");
+			selenium.click("//input[@value='Search']");
+			Thread.sleep(2000);
+			if((selenium.isVisible("css=#answer_hub > div:nth-child(1) > span > input.ic_valid.button_icon.visibility_visible"))==true){
+				System.out.print("]: Test PASSED");
+				}
+		} else { 
+			ln("adress did not validate");
+			ln(selenium.isElementPresent("css=#answer_hub > div:nth-child(1) > span > input.ic_valid.button_icon.visibility_visible"));
+			Assert.fail();
+		}}}}			
+			
+	@Test
 	public void GeoInfoTab() throws Exception {
 		try{
 		ValidateAddress();
@@ -131,7 +194,8 @@ public class PostDeploymentTests {
 		assertTrue(selenium.isTextPresent("District"));
 		}catch (Exception e){
             System.out.println(e);
-            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
+            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/GeoInfoTab.png");
+            SendEmail.send("angel.martin@miamidade.gov", "test", "Geo Info Tab"+e.getMessage());
             Assert.fail();
         }}
 	@Test
@@ -139,33 +203,21 @@ public class PostDeploymentTests {
 		try{
 		ValidateAddress();
 		selenium.type("xpath=(//input[@type='text'])[6]", "Bulky");
-		selenium.click("xpath=(//input[@value='Search'])[3]");
+		selenium.click("css=#answer_hub > div:nth-child(5) > span > input.submit.h32.button.blue");
+		String Address = selenium.getText("css=#answer_hub > div:nth-child(1) > span > input.ic_field.h24.address_reset.color_green");
 		selenium.click("link=BULKY TRASH REQUEST");
-		selenium.click("xpath=(//button[@type='button'])[3]");
-		assertTrue(selenium.isVisible("css=#sr_details > span > div:nth-child(1) > h4"));
-		assertTrue(selenium.isVisible("css=#sr_details > div:nth-child(22) > h4"));
+		Thread.sleep(2500);
+		selenium.click("css=body > div:nth-child(13) > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1) > span");
+		selenium.isTextPresent(Address);
 		}catch (Exception e){
             System.out.println(e);
-            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
+            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/OpenSrInAnswerHub.png");
+            SendEmail.send("angel.martin@miamidade.gov", "test", "Open Sr in Answer Hub"+e.getMessage());
             Assert.fail();
         }}	
 	
-	@Test
-	public void multiple() throws Exception {
-		try{
-		int times = 15;
-		
-		for (int i = 0; i < times; i++){
-			this.OpenSRInAnswerHub();
-			ln(i+1);
-		}
-		}catch (Exception e){
-	System.out.println(e);
-    SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
-    Assert.fail();
-	}}
 	
-//	@Test
+	@Test
 	public void ValidateinWCS() throws Exception {
 		try{
 		login();
@@ -178,12 +230,13 @@ public class PostDeploymentTests {
 		selenium.isTextPresent("11558262");
 		}catch (Exception e){
 			System.out.println(e);
-			SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
+			selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/ValidateWCS.png");
+			SendEmail.send("angel.martin@miamidade.gov", "test", "Validate WCS"+e.getMessage());
 			Assert.fail();
 		}}	
-//	@Test
+	@Test
 	public void MasterClr() throws Exception {
-//		try{
+		try{
 		OpenSRInAnswerHub();
 		selenium.click("css=textarea.tooltip");
 		selenium.type("css=textarea.tooltip", "test");
@@ -226,17 +279,19 @@ public class PostDeploymentTests {
 		selenium.type("//div[@id='sr_details']/div[23]/div/div[50]/input", "3305111234");
 		selenium.click("css=#sr_details > div.grid_2.omega > input.button.blue");
 		selenium.click("xpath=(//button[@type='button'])[5]");
-		selenium.isVisible("css=div.grid_5.alpha > input..error");
-		selenium.isVisible("css=div.grid_5.alpha > input..error");
-//		}catch (Exception e){
-//            System.out.println(e);
-//            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
-//            Assert.fail();
-//        }}
-	}
+		selenium.click("css=#sr_details > div:nth-child(2) > input");
+		selenium.click("css=body > div:nth-child(15) > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1) > span");
+		assertFalse(selenium.isTextPresent("Contact Infromation"));
+		}catch (Exception e){
+            System.out.println(e);
+            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/MasterCLR.png");
+            SendEmail.send("angel.martin@miamidade.gov", "test", "Mater CLR"+e.getMessage());
+            Assert.fail();
+        }}
+
 // 	@Test	
  	public void SaveSr() throws Exception {
-		try{
+//		try{
  		OpenSRInAnswerHub();
 		selenium.click("css=textarea.tooltip");
 		selenium.type("css=textarea.tooltip", "test");
@@ -277,15 +332,18 @@ public class PostDeploymentTests {
 		selenium.click("xpath=(//button[@type='button'])[3]");
 		selenium.click("//div[@id='sr_details']/div[23]/div/div[50]/input");
 		selenium.type("//div[@id='sr_details']/div[23]/div/div[50]/input", "3305111234");
-		selenium.click("css=#save");
-		System.out.println(selenium.getValue("css=#editorDiv > div.app_container > div.right_column.grid_2 > span > input.search"));
-		selenium.getValue("css=#editorDiv > div.app_container > div.right_column.grid_2 > span > input.search");
-		}catch (Exception e){
-            System.out.println(e);
-            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
-            Assert.fail();
-        }} 	
-//	@Test	
+//		selenium.click("css=#save");
+//		selenium.getValue("css=#editorDiv > div.app_container > div.right_column.grid_2 > span > input.search");
+//		System.out.println(selenium.getValue("css=#editorDiv > div.app_container > div.right_column.grid_2 > span > input.search"));
+//		selenium.getValue("css=#editorDiv > div.app_container > div.right_column.grid_2 > span > input.search");
+//		}catch (Exception e){
+//            System.out.println(e);
+//            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failed test/SaveSr.png");
+//            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
+//            Assert.fail();
+//        }
+		} 	
+	@Test	
  	public void OpenSrBasicSearch() throws Exception {
  		try{
  		login();
@@ -303,15 +361,16 @@ public class PostDeploymentTests {
 		selenium.getValue("css=#editorDiv > div.app_container > div.right_column.grid_2 > span > input.search");
  		}catch (Exception e){
             System.out.println(e);
-            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
+            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/OpenSrBasicSearch.png");
+            SendEmail.send("angel.martin@miamidade.gov", "test", "Open SR Basic Search"+e.getMessage());
             Assert.fail();
         }}
-// 	@Test
+ 	@Test
 	public void FeildSort() throws Exception {
 		try{
 		selenium.open(site);
 		selenium.type("id=iUsername", "c203036");
-		selenium.type("id=iPassword", "hahahaha147");
+		selenium.type("id=iPassword", pass);
 		selenium.click("id=btnLogin");
 		Thread.sleep(8000);
 		selenium.click("css=body > div.container_12 > div.banner.grid_12 > ul > li:nth-child(6) > a");
@@ -320,16 +379,16 @@ public class PostDeploymentTests {
 		selenium.select("css=#advsearch_moreDetails > div:nth-child(3) > select", "Locked");
 		selenium.type("id=createdStartDate", "-1");
 		selenium.click("css=#advSearch_right > input:nth-child(1)");
-		Thread.sleep(1000);
+		Thread.sleep(4500);
 		String sr1 = selenium.getText("css=#advSearchResults > table > tbody > tr:nth-child(1) > td:nth-child(1) > a");
 		String[] parts = sr1.split("-");
 		ln("Sr1= " + parts[1]);
 		int sr01 = Integer.parseInt(parts[1]);
-
 		selenium.click("css=#advSearchResults > table > thead > tr > th:nth-child(1) > img");
 		String sr2 = selenium.getText("css=#advSearchResults > table > tbody > tr:nth-child(1) > td:nth-child(1) > a");
 		parts = sr2.split("-");
 		int sr02 = Integer.parseInt(parts[1]);
+		ln("Sr2= "+sr02);
 		int test= sr01-sr02; 
 		if(test >0 ) {
 						ln("SUCCESSFUL SORT IS OPERATIONAL.");
@@ -340,11 +399,14 @@ public class PostDeploymentTests {
 			} 
 		ln("FeildSort= Done");	
 		}catch (Exception e){
-            System.out.println(e);
-            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
-            Assert.fail();
+          System.out.println(e);
+          selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/FeildSort.png");
+          SendEmail.send("angel.martin@miamidade.gov", "test", "Feild Sort"+e.getMessage());
+          Assert.fail();
         }}
- //    @Test
+
+		
+    @Test
  	public void ViewReport() throws Exception {
  		try{
  		login();
@@ -356,15 +418,42 @@ public class PostDeploymentTests {
 		selenium.click("id=showMoreFieldsId");
 		selenium.select("css=#advsearch_moreDetails > div:nth-child(3) > select", "Locked");
 		selenium.click("css=#advSearch_right > input[name=\"search\"]");
-		Thread.sleep(500);
+		Thread.sleep(1800);
 		selenium.click("css=#advSearchResults > table > tbody > tr:nth-child(1) > td:nth-child(1) > a");
 		selenium.click("css=body > div:nth-child(11) > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2) > span");
-		}catch (Exception e){
-            System.out.println(e);
-            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
-            Assert.fail();
-        }}
-    //	@Test
+		Thread.sleep(2000);
+//		ln(selenium.getAllWindowNames());
+		String[] names = selenium.getAllWindowNames();
+		String windowName = null;
+//		try{
+//		assumes only one main window and one pop over
+			windowName = names[1];
+			selenium.selectWindow(names[1]);
+			(windowName).equalsIgnoreCase("frompop_1461961429332");
+		} catch (Exception e){
+			System.out.println(e);
+			selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/ViewReport.png");
+			SendEmail.send("angel.martin@miamidade.gov", "test", "View Report"+e.getMessage());
+			Assert.fail();
+		}}
+//		StringBuilder builder = new StringBuilder();
+//		for(String s : name) {
+//		    builder.append(s);
+//		}
+//		return builder.toString(name1);
+//		
+//		
+//		selenium.selectPopUp(name);
+//		selenium.getLocation();
+//		ln(selenium.getLocation());
+ 		
+//		}catch (Exception e){
+//            System.out.println(e);
+//            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/ViewReport.png");
+//            SendEmail.send("angel.martin@miamidade.gov", "test", "View Report"+e.getMessage());
+//            Assert.fail();
+//        }}
+ 	@Test
  	public void Duplicate() throws Exception {
  		try{
  		login();
@@ -378,10 +467,11 @@ public class PostDeploymentTests {
 		assertTrue(selenium.isElementPresent("css=#sr_details_right > input.red_button.button.blue"));
  		}catch (Exception e){
             System.out.println(e);
-            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
+            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/Duplicate.png");
+            SendEmail.send("angel.martin@miamidade.gov", "test", "Duplicate"+e.getMessage());
             Assert.fail();
         }}
-// 	@Test
+ 	@Test
  	public void OutofServiceArea() throws Exception {
  		try{
  		login();
@@ -395,15 +485,16 @@ public class PostDeploymentTests {
 		selenium.isTextPresent("Outside Service Area.");
  		}catch (Exception e){
             System.out.println(e);
-            SendEmail.send("angel.martin@miamidade.gov", "test", ""+e.getMessage());
+            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/OutofServiceArea.png");
+            SendEmail.send("angel.martin@miamidade.gov", "test", "Out of Service Area"+e.getMessage());
             Assert.fail();
         }} 	
-// 	@Test
+ 	@Test
  	public void apporvalProcess() throws Exception {
  		try{
  		selenium.open(site);
  		selenium.type("id=iUsername", "c203036");
-		selenium.type("id=iPassword", "hahahaha147");
+		selenium.type("id=iPassword", pass);
 		selenium.click("id=btnLogin");
 		Thread.sleep(8000);
  		selenium.click("link=Basic Search");
@@ -419,7 +510,8 @@ public class PostDeploymentTests {
 		selenium.isTextPresent("The following Service Request has been identified as a self-service request and is 'Pending Approval'. Please review the request and make appropriate changes. When complete, set the status to 'Open' then save.");
  		}catch (Exception e){
             System.out.println(e);
-            SendEmail.send("angel.martin@miamidade.gov", "test", e.getMessage());
+            selenium.captureScreenshot("C://Users/angel.martin.MIAMIDADE/Desktop/failed test/ApprovalProcess.png");
+            SendEmail.send("angel.martin@miamidade.gov", "test", "Apporval Process <br>file:///C://Users/angel.martin.MIAMIDADE/Desktop/failedtest/ApprovalProcess.png"+e.getMessage());
             Assert.fail();
         }}
 //	private boolean isTextPresent(String textToBeVerified) {
@@ -436,12 +528,13 @@ public class PostDeploymentTests {
 
 // 	@Test
 	public void message() throws Exception {
-		SendEmail.send("angel.martin@miamidade.gov,rajiv@miamidade.gov","Hello my Friend", "it works jejejejejeje");
+		SendEmail.send("angel.martin@miamidade.gov","Hello my Friend", "it works jejejejejeje");
 	}
 	@After
 	public void tearDown() throws Exception {
 	 selenium.stop();
 	 selenium.shutDownSeleniumServer();
 	 ln("server successfully shut down.");
+	
 	}
 }
